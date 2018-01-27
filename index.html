@@ -24,7 +24,8 @@ function preload() {
 }
 
 var player;
-var stars;
+var diamonds;
+var timer;
 
 function create() {
 
@@ -38,11 +39,15 @@ function create() {
     player.body.collideWorldBounds = true;
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    timer = game.time.create(false);
+    timer.loop(500, createPlanetoid, this);
+    timer.start();
 }
 
 function update() {
 
-    var hitDiamond = game.physics.arcade.overlap(player, diamonds);
+    game.physics.arcade.overlap(player, diamonds, gameOver);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -64,6 +69,35 @@ function update() {
     {
         player.body.velocity.y = 150;
     }
+
+    diamonds.forEach(wrapDiamond, this);
+}
+
+function createPlanetoid() {
+    diamond = game.add.sprite(0, game.world.height / 2.0, 'diamond');
+    game.physics.arcade.enable(diamond);
+    diamond.body.velocity.x = game.rnd.integerInRange(-200, 200)
+    diamond.body.velocity.y = game.rnd.integerInRange(-200, 200)
+    diamonds.add(diamond);
+}
+
+function wrapDiamond(diamond) {
+    if (diamond.x > game.width) {
+        diamond.x = 0 - diamond.width;
+    } else if (diamond.x + diamond.width < 0) {
+        diamond.x = game.width;
+    }
+
+    if (diamond.y > game.height) {
+        diamond.y = 0 - diamond.height;
+    } else if (diamond.y + diamond.height < 0) {
+        diamond.y = game.height;
+    }
+}
+
+function gameOver() {
+    diamonds.destroy();
+    player.kill();
 }
 
 </script>
