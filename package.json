@@ -1,0 +1,22 @@
+{
+  "name": "planetoids",
+  "version": "1.0.0",
+  "description": "Simple Asteroids like game using PhaserJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sethpuckett/planetoids.git"
+  },
+  "author": "Seth Puckett",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sethpuckett/planetoids/issues"
+  },
+  "homepage": "https://github.com/sethpuckett/planetoids#readme",
+  "dependencies": {
+    "phaser": "^2.6.2"
+  }
+}
