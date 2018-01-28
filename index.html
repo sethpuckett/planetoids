@@ -14,40 +14,97 @@
 
 <script type="text/javascript">
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-
-function preload() {
-
-    game.load.image('star', 'assets/star.png');
-    game.load.spritesheet('diamond', 'assets/diamond.png');
-
-}
-
+var game = new Phaser.Game(600, 400, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var player;
 var diamonds;
 var timer;
+var scoreTimer;
+var gameState;
+var titleText;
+var scoreText;
+var endScoreText;
+var score;
+
+var GAME_STATE = {
+    NEW_GAME: 1,
+    IN_GAME: 2,
+    END_GAME: 3
+};
+
+function preload() {
+    game.load.image('star', 'assets/star.png');
+    game.load.spritesheet('diamond', 'assets/diamond.png');
+}
 
 function create() {
-
     game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    diamonds = game.add.group();
-    diamonds.enableBody = true;
-
-    player = game.add.sprite(32, game.world.height - 150, 'star');
-    game.physics.arcade.enable(player);
-    player.body.collideWorldBounds = true;
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    timer = game.time.create(false);
-    timer.loop(500, createPlanetoid, this);
-    timer.start();
+    titleText = game.add.text(150, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });
+
+    gameState = GAME_STATE.NEW_GAME;
 }
 
 function update() {
+    if (gameState == GAME_STATE.NEW_GAME) {
+        newGameUpdate();
+    } else if (gameState == GAME_STATE.IN_GAME) {
+        inGameUpdate();
+    } else if (gameState == GAME_STATE.END_GAME) {
+        endGameUpdate();
+    }
+}
 
-    game.physics.arcade.overlap(player, diamonds, gameOver);
+function startGame() {
+    titleText.destroy();
+    if (endScoreText != null) {
+        endScoreText.destroy();
+    }
+    scoreText = game.add.text(5, 5, 'Score: 0', { fontSize: '18px', fill: '#fff' });
+    score = 0;
+
+    player = game.add.sprite(game.world.width / 2.0, game.world.height / 2.0, 'star');
+    game.physics.arcade.enable(player);
+    player.body.setSize(player.width * .75, player.height * .75, player.width * .125, player.height * .125);
+
+    diamonds = game.add.group();
+    diamonds.enableBody = true;
+    
+    gameState = GAME_STATE.IN_GAME;
+
+    scoreTimer = game.time.create(false);
+    scoreTimer.start();
+
+    timer = game.time.create(false);
+    timer.loop(1000, createPlanetoid, this);
+    timer.start();
+}
+
+function endGame() {
+    timer.destroy();
+    diamonds.destroy();
+    player.kill();
+    scoreText.destroy();
+    scoreTimer.destroy();
+
+    endScoreText = game.add.text(150, 100, 'Score: ' + score, { fontSize: '48px', fill: '#fff' });    
+    titleText = game.add.text(150, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });  
+
+    gameState = GAME_STATE.END_GAME;
+      
+}
+
+function newGameUpdate() {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+    {
+        startGame();
+    }
+}
+
+function inGameUpdate() {
+    game.physics.arcade.overlap(player, diamonds, endGame);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -60,7 +117,7 @@ function update() {
     {
         player.body.velocity.x = 150;
     }
-    
+
     if (cursors.up.isDown && !cursors.down.isDown)
     {
         player.body.velocity.y = -150;
@@ -70,12 +127,42 @@ function update() {
         player.body.velocity.y = 150;
     }
 
+    score += scoreTimer.elapsed;
+
+    scoreText.text = "Score: " + score;
+
     diamonds.forEach(wrapDiamond, this);
+    wrapPlayer();
+}
+
+function endGameUpdate() {
+    if (game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+    {
+        startGame();
+    }
 }
 
 function createPlanetoid() {
-    diamond = game.add.sprite(0, game.world.height / 2.0, 'diamond');
+    var rand = game.rnd.integerInRange(0, 3);
+    var diamond = game.add.sprite(0, 0, 'diamond');
+    
+    if (rand == 0) {
+        diamond.x = 0;
+        diamond.y = game.world.height / 2.0;
+    } else if (rand == 1) {
+        diamond.x = game.world.width;
+        diamond.y = game.world.height / 2.0;
+    } else if (rand == 2) {
+        diamond.x = game.world.width / 2.0;
+        diamond.y = game.world.height;
+    } else if (rand == 3) {
+        diamond.x = game.world.width / 2.0;
+        diamond.y = 0;
+    }
+
     game.physics.arcade.enable(diamond);
+    diamond.body.setSize(diamond.width * .75, diamond.height * .75, diamond.width * .125, diamond.height * .125);
+    
     diamond.body.velocity.x = game.rnd.integerInRange(-200, 200)
     diamond.body.velocity.y = game.rnd.integerInRange(-200, 200)
     diamonds.add(diamond);
@@ -95,9 +182,18 @@ function wrapDiamond(diamond) {
     }
 }
 
-function gameOver() {
-    diamonds.destroy();
-    player.kill();
+function wrapPlayer() {
+    if (player.x > game.width) {
+        player.x = 0 - player.width;
+    } else if (player.x + player.width < 0) {
+        player.x = game.width;
+    }
+
+    if (player.y > game.height) {
+        player.y = 0 - player.height;
+    } else if (player.y + player.height < 0) {
+        player.y = game.height;
+    }
 }
 
 </script>
