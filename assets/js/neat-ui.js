@@ -1,0 +1,6 @@
+var NeatUi = (function () {
+
+  return {
+
+  };
+}());

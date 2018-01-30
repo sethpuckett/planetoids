@@ -1,0 +1,6 @@
+var Neat = (function () {
+
+  return {
+
+  };
+}());
