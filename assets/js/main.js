@@ -1,6 +1,6 @@
 (function(planetoids, controls, neat, neatUi) {
 
-var game = new Phaser.Game(600, 400, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(600, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var keystate = {
     left: false,
