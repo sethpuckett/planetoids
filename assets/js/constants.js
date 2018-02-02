@@ -1,3 +1,14 @@
+
+// Variable
+
+var MANUAL_KEYSTATE = false;
+var SCREEN_SIZE = 500;
+var NEAT_INPUT_SIZE = 20;
+
+// Fixed
+
+JUMP_VALUE = SCREEN_SIZE / NEAT_INPUT_SIZE;
+
 var GAME_STATE = {
   NEW_GAME: 1,
   IN_GAME: 2,
