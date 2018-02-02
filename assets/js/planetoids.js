@@ -174,6 +174,4 @@ var Planetoids = (function () {
     inGameUpdate: inGameUpdate,
     endGameUpdate: endGameUpdate
   };
-  
-
 }());

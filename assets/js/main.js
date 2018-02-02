@@ -1,6 +1,8 @@
 (function(planetoids, controls, neat, neatUi) {
 
-var game = new Phaser.Game(600, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var MANUAL_KEYSTATE = false;
+
+var game = new Phaser.Game(500, 500, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var keystate = {
     left: false,
@@ -23,7 +25,11 @@ function create() {
 }
 
 function update() {
-    updateKeystate();
+    if (MANUAL_KEYSTATE) {
+        setManualKeystate();
+    } else {
+        keystate = neat.getKeystate();
+    }
 
     if (gameState == GAME_STATE.NEW_GAME) {
         planetoids.newGameUpdate(keystate);
@@ -39,7 +45,7 @@ function update() {
     }
 }
 
-function updateKeystate() {
+function setManualKeystate() {
     keystate.left = game.input.keyboard.isDown(Phaser.Keyboard.LEFT)
     keystate.right = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
     keystate.up = game.input.keyboard.isDown(Phaser.Keyboard.UP)
