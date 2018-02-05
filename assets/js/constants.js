@@ -3,6 +3,8 @@
 
 var MANUAL_KEYSTATE = false;
 var SCREEN_SIZE = 500;
+var NEAT_UI_WIDTH = 500;
+var NEAT_UI_HEIGHT = 400;
 var NEAT_INPUT_SIZE = 20;
 
 // Fixed

@@ -1,0 +1,27 @@
+body {
+  width: 1050px;
+  height: 550px;
+}
+
+#game {
+  display: inline-block;
+  width: 502x;
+  height: 500px;
+  border: 1px solid gray;
+}
+
+#neat-container {
+  display: inline-block;
+  width: 502px;
+  height: 500px;
+}
+
+#neat-ui {
+  height: 400px;
+  border: 1px solid gray;
+}
+
+#controls {
+  height: 96px;
+  border: 1px solid gray;
+}
