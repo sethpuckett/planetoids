@@ -1,4 +1,4 @@
-var Planetoids = (function () {
+var Planetoids = (function (controls) {
   
   var diamonds;
   var timer;
@@ -7,6 +7,7 @@ var Planetoids = (function () {
   var scoreText;
   var endScoreText;
   var score;
+  var hyperEnabled;
 
   var game;
   var stateRequest;
@@ -30,25 +31,24 @@ var Planetoids = (function () {
       player.body.velocity.x = 0;
       player.body.velocity.y = 0;
   
-      if (keystate.left && !keystate.right)
-      {
-          player.body.velocity.x = -150;
+      var newHyperEnabled = controls.hyperEnabled();
+
+      if (newHyperEnabled != hyperEnabled) {
+        timer.stop();
+        var loopTime = newHyperEnabled ? 100 : 1000;
+        timer.loop(loopTime, createPlanetoid, this);
+        timer.start();
       }
-      else if (keystate.right && !keystate.left)
-      {
-          player.body.velocity.x = 150;
+
+      setDiamondVelocity(newHyperEnabled);
+      setPlayerVelocity(keystate, newHyperEnabled);
+      hyperEnabled = newHyperEnabled;
+
+      var scoreAdd = scoreTimer.elapsed;
+      if (newHyperEnabled) {
+          scoreAdd *= 10;
       }
-  
-      if (keystate.up && !keystate.down)
-      {
-          player.body.velocity.y = -150;
-      }
-      else if (keystate.down && !keystate.up)
-      {
-          player.body.velocity.y = 150;
-      }
-  
-      score += scoreTimer.elapsed;
+      score += scoreAdd;
   
       scoreText.text = "Score: " + score;
   
@@ -86,8 +86,9 @@ var Planetoids = (function () {
     scoreTimer = game.time.create(false);
     scoreTimer.start();
 
+    var loopTime = controls.hyperEnabled() ? 100 : 1000;
     timer = game.time.create(false);
-    timer.loop(1000, createPlanetoid, this);
+    timer.loop(loopTime, createPlanetoid, this);
     timer.start();
   }
 
@@ -132,9 +133,50 @@ var Planetoids = (function () {
       game.physics.arcade.enable(diamond);
       diamond.body.setSize(diamond.width * .75, diamond.height * .75, diamond.width * .125, diamond.height * .125);
       
-      diamond.body.velocity.x = game.rnd.integerInRange(-200, 200)
-      diamond.body.velocity.y = game.rnd.integerInRange(-200, 200)
+      var maxVelocity = controls.hyperEnabled() ? 2000 : 200;
+
+      diamond.body.velocity.x = game.rnd.integerInRange(-maxVelocity, maxVelocity)
+      diamond.body.velocity.y = game.rnd.integerInRange(-maxVelocity, maxVelocity)
       diamonds.add(diamond);
+  }
+
+  function setDiamondVelocity(newHyperEnabled) {
+    if (newHyperEnabled != hyperEnabled) {
+        var changeFactor = 1;
+            
+        if (newHyperEnabled) {
+            changeFactor = 10;
+        } else {
+            changeFactor = .1;
+        }
+
+        diamonds.forEach(function(diamond) {
+            diamond.body.velocity.x = diamond.body.velocity.x * changeFactor;
+            diamond.body.velocity.y = diamond.body.velocity.y * changeFactor;
+        });
+    }
+  }
+
+  function setPlayerVelocity(keystate, newHyperEnabled) {
+    var velocity = newHyperEnabled ? 1500: 150;
+
+    if (keystate.left && !keystate.right)
+    {
+        player.body.velocity.x = -velocity;
+    }
+    else if (keystate.right && !keystate.left)
+    {
+        player.body.velocity.x = velocity;
+    }
+
+    if (keystate.up && !keystate.down)
+    {
+        player.body.velocity.y = -velocity;
+    }
+    else if (keystate.down && !keystate.up)
+    {
+        player.body.velocity.y = velocity;
+    }
   }
   
   function wrapDiamond(diamond) {
@@ -174,4 +216,4 @@ var Planetoids = (function () {
     inGameUpdate: inGameUpdate,
     endGameUpdate: endGameUpdate
   };
-}());
+}(Controls));

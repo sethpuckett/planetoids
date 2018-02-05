@@ -12,6 +12,7 @@ body {
 
 #neat-container {
   display: inline-block;
+  vertical-align: top;
   width: 502px;
   height: 500px;
 }
@@ -24,4 +25,23 @@ body {
 #controls {
   height: 96px;
   border: 1px solid gray;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-size: 12px;
+  overflow: auto;
+}
+
+.control {
+  display: inline-block;
+  padding: 5px;
+  width: 110px;
+}
+
+.control .control-label {
+  display: inline-block;
+  width: 80px;
+  
+}
+.control .control-input {
+  display: inline-block;
+  width: 20px;
 }
