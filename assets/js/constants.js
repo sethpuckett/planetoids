@@ -1,7 +1,6 @@
 
 // Variable
 
-var MANUAL_KEYSTATE = false;
 var SCREEN_SIZE = 500;
 var NEAT_UI_WIDTH = 500;
 var NEAT_UI_HEIGHT = 400;

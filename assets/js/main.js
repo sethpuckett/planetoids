@@ -2,7 +2,8 @@
 
 var game = new Phaser.Game(SCREEN_SIZE, SCREEN_SIZE, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 
-var keystate = {
+var keystate;
+var manualKeystate = {
     left: false,
     right: false,
     up: false,
@@ -10,8 +11,14 @@ var keystate = {
     space: false,
 };
 
+var neatControl = false;
+
 $(document).on('change', '#control-paused', function() {
     game.paused = controls.pauseEnabled();   
+});
+
+$(document).on('change', '#control-neat', function() {
+    neatControl = controls.neatControlEnabled();   
 });
 
 function preload() {
@@ -27,10 +34,10 @@ function create() {
 }
 
 function update() {
-    if (MANUAL_KEYSTATE) {
-        setManualKeystate();
-    } else {
+    if (neatControl) {
         keystate = neat.getKeystate();
+    } else {
+        keystate = setManualKeystate();        
     }
 
     if (gameState == GAME_STATE.NEW_GAME) {
@@ -48,11 +55,13 @@ function update() {
 }
 
 function setManualKeystate() {
-    keystate.left = game.input.keyboard.isDown(Phaser.Keyboard.LEFT)
-    keystate.right = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
-    keystate.up = game.input.keyboard.isDown(Phaser.Keyboard.UP)
-    keystate.down = game.input.keyboard.isDown(Phaser.Keyboard.DOWN)
-    keystate.space = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
+    manualKeystate.left = game.input.keyboard.isDown(Phaser.Keyboard.LEFT)
+    manualKeystate.right = game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)
+    manualKeystate.up = game.input.keyboard.isDown(Phaser.Keyboard.UP)
+    manualKeystate.down = game.input.keyboard.isDown(Phaser.Keyboard.DOWN)
+    manualKeystate.space = game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)
+
+    return manualKeystate;
 }
 
 })(Planetoids, Controls, Neat, NeatUi);
