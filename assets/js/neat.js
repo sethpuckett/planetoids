@@ -41,15 +41,15 @@ var Neat = (function () {
       var adjustedX = enemy.x + xOffset;
       var adjustedY = enemy.y + yOffset;
 
-      if (adjustedX < 0) {
+      if (adjustedX <= 0) {
         adjustedX += SCREEN_SIZE;
-      } else if (adjustedX > SCREEN_SIZE) {
+      } else if (adjustedX >= SCREEN_SIZE) {
         adjustedX -= SCREEN_SIZE;
       }
 
-      if (adjustedY < 0) {
+      if (adjustedY <= 0) {
         adjustedY += SCREEN_SIZE;
-      } else if (adjustedY > SCREEN_SIZE) {
+      } else if (adjustedY >= SCREEN_SIZE) {
         adjustedY -= SCREEN_SIZE;
       }
 

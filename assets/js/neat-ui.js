@@ -1,5 +1,5 @@
 var NeatUi = (function (neat) {
-  
+
   var INPUT_GRID_SIZE = NEAT_UI_WIDTH / 3;
   var INPUT_CELL_SIZE = INPUT_GRID_SIZE / NEAT_INPUT_SIZE;
 
@@ -40,6 +40,22 @@ var NeatUi = (function (neat) {
     inputGraphics.clear();
     inputGraphics.lineStyle(1, 0x000, 1);
 
+    drawPlayer();
+    drawEnemies();
+  }
+
+  function drawPlayer() {
+    inputGraphics.beginFill(0x70FF0B, 1);
+    inputGraphics.drawRect(
+      INPUT_CELL_SIZE + (INPUT_CELL_SIZE * parseInt(NEAT_INPUT_SIZE / 2)), 
+      INPUT_CELL_SIZE + (INPUT_CELL_SIZE * parseInt(NEAT_INPUT_SIZE / 2)), 
+      INPUT_CELL_SIZE, 
+      INPUT_CELL_SIZE
+    );
+    inputGraphics.endFill();
+  }
+
+  function drawEnemies(input) {
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
       for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
         if (input[i][j]) {
@@ -80,8 +96,6 @@ var NeatUi = (function (neat) {
     var yMod = (INPUT_GRID_SIZE / 4);
     var buttonYBuffer = 8;
     var textStyle = { font: 'Bold 18pt Arial', fill: '#000' }
-    var 
-
 
     upText = neatUiGame.add.text(textX, yBase + yMod * 0, 'Up', textStyle);
     DownText = neatUiGame.add.text(textX, yBase + yMod * 1, 'Down', textStyle);
