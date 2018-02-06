@@ -1,10 +1,11 @@
-var NeatUi = (function () {
-
+var NeatUi = (function (neat) {
+  
   var INPUT_GRID_SIZE = NEAT_UI_WIDTH / 3;
   var INPUT_CELL_SIZE = INPUT_GRID_SIZE / NEAT_INPUT_SIZE;
 
   var neatUiGame = new Phaser.Game(NEAT_UI_WIDTH, NEAT_UI_HEIGHT, Phaser.AUTO, 'neat-ui', { preload: preload, create: create, update: update });
   var staticGraphics;
+  var inputGraphics;
   var upText;
   var downText;
   var leftText;
@@ -14,8 +15,6 @@ var NeatUi = (function () {
   var leftButton;
   var rightButton;
 
-
-
   function preload() {
 
   }
@@ -24,13 +23,37 @@ var NeatUi = (function () {
     neatUiGame.stage.backgroundColor = "#fff";
 
     staticGraphics = neatUiGame.add.graphics(0, 0);
+    inputGraphics = neatUiGame.add.graphics(0, 0);
 
     drawInputGrid();
     drawButtonOutputs();
   }
 
   function update() {
-    
+    input = neat.getInput();
+    if (input != null) {
+      drawInput(input);
+    }
+  }
+
+  function drawInput(input) {
+    inputGraphics.clear();
+    inputGraphics.lineStyle(1, 0x000, 1);
+
+    for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
+      for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
+        if (input[i][j]) {
+          inputGraphics.beginFill(0xFF700B, 1);
+          inputGraphics.drawRect(
+            INPUT_CELL_SIZE + INPUT_CELL_SIZE * i, 
+            INPUT_CELL_SIZE + INPUT_CELL_SIZE * j, 
+            INPUT_CELL_SIZE, 
+            INPUT_CELL_SIZE
+          );
+          inputGraphics.endFill();
+        }
+      }
+    }
   }
 
   function drawInputGrid() {
@@ -75,4 +98,4 @@ var NeatUi = (function () {
   return {
 
   };
-}());
+}(Neat));

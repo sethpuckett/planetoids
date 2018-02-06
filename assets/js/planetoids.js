@@ -63,6 +63,14 @@ var Planetoids = (function (controls) {
       }
   }
 
+  function getPlayer() {
+    return player;
+  }
+
+  function getEnemies() {
+    return diamonds;
+  }
+
   function requestedState() {
     return stateRequest;
   }
@@ -214,6 +222,8 @@ var Planetoids = (function (controls) {
     create: create,
     newGameUpdate: newGameUpdate,
     inGameUpdate: inGameUpdate,
-    endGameUpdate: endGameUpdate
+    endGameUpdate: endGameUpdate,
+    getPlayer: getPlayer,
+    getEnemies: getEnemies
   };
 }(Controls));

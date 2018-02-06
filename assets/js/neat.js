@@ -34,12 +34,12 @@ var Neat = (function () {
       }
     }
 
-    var xOffset = playerPosition.x - (SCREEN_SIZE / 2);
-    var yOffset = playerPosition.y - (SCREEN_SIZE / 2);
+    var xOffset = player.x - (SCREEN_SIZE / 2);
+    var yOffset = player.y - (SCREEN_SIZE / 2);
 
     enemies.forEach(function(enemy) {
       var adjustedX = enemy.x + xOffset;
-      var adjustedY = enemy.Y + yOffset;
+      var adjustedY = enemy.y + yOffset;
 
       if (adjustedX < 0) {
         adjustedX += SCREEN_SIZE;
@@ -53,8 +53,8 @@ var Neat = (function () {
         adjustedY -= SCREEN_SIZE;
       }
 
-      inputX = parseInt(adjustedX / SCREEN_SIZE);
-      inputY = parseInt(adjustedY / SCREEN_SIZE);
+      inputX = Math.min(19, parseInt((adjustedX / SCREEN_SIZE) * NEAT_INPUT_SIZE));
+      inputY = Math.min(19, parseInt((adjustedY / SCREEN_SIZE) * NEAT_INPUT_SIZE));
       input[inputX][inputY] = true;
     });
 
