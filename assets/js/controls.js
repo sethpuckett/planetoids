@@ -5,15 +5,15 @@ var Controls = (function () {
   }
 
   function pauseEnabled() {
-    return $("#control-pause").checked;
+    return $("#control-paused").prop("checked");
   }
 
   function neatUiEnabled() {
-    return $("#control-neat-ui").checked;
+    return $("#control-neat-ui").prop("checked");
   }
 
   function neatControlEnabled() {
-    return $("#control-neat").checked;
+    return $("#control-neat").prop("checked");
   }
 
   return {

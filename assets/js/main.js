@@ -10,6 +10,10 @@ var keystate = {
     space: false,
 };
 
+$(document).on('change', '#control-paused', function() {
+    game.paused = controls.pauseEnabled();   
+});
+
 function preload() {
     planetoids.setGame(game);
     
