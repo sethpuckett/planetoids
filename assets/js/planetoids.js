@@ -22,7 +22,7 @@ var Planetoids = (function (controls) {
   }
   
   function create() {
-      titleText = game.add.text(150, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });
+      titleText = game.add.text(100, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });
   }
   
   function inGameUpdate(keystate) {
@@ -115,8 +115,8 @@ var Planetoids = (function (controls) {
     scoreText.destroy();
     scoreTimer.destroy();
 
-    endScoreText = game.add.text(150, 100, 'Score: ' + score, { fontSize: '48px', fill: '#fff' });    
-    titleText = game.add.text(150, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });  
+    endScoreText = game.add.text(100, 100, 'Score: ' + score, { fontSize: '48px', fill: '#fff' });    
+    titleText = game.add.text(100, 150, 'Press Spacebar to Start', { fontSize: '64px', fill: '#fff' });  
 
     stateRequest = GAME_STATE.END_GAME;  
   }
