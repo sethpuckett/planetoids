@@ -51,6 +51,9 @@ var Planetoids = (function (controls) {
       score += scoreAdd;
   
       scoreText.text = "Score: " + score;
+
+      //game.debug.body(player);
+      //diamonds.forEach(function(diamond) { game.debug.body(diamond); });
   
       diamonds.forEach(wrapDiamond, this);
       wrapPlayer();
@@ -84,8 +87,11 @@ var Planetoids = (function (controls) {
     score = 0;
 
     player = game.add.sprite(game.world.width / 2.0, game.world.height / 2.0, 'star');
+    player.width = SPRITE_SIZE;
+    player.height = SPRITE_SIZE;
+
     game.physics.arcade.enable(player);
-    player.body.setSize(player.width * .75, player.height * .75, player.width * .125, player.height * .125);
+    player.body.setSize(SPRITE_PIXEL_SIZE * .75, SPRITE_PIXEL_SIZE * .75, player.width * .125, player.height * .125);
     diamonds = game.add.group();
     diamonds.enableBody = true;
     
@@ -98,6 +104,8 @@ var Planetoids = (function (controls) {
     timer = game.time.create(false);
     timer.loop(loopTime, createPlanetoid, this);
     timer.start();
+
+    createPlanetoid();
   }
 
   function endGame() {
@@ -123,6 +131,8 @@ var Planetoids = (function (controls) {
   function createPlanetoid() {
       var rand = game.rnd.integerInRange(0, 3);
       var diamond = game.add.sprite(0, 0, 'diamond');
+      diamond.width = SPRITE_SIZE;
+      diamond.height = SPRITE_SIZE;
       
       if (rand == 0) {
           diamond.x = 0;
@@ -139,8 +149,7 @@ var Planetoids = (function (controls) {
       }
   
       game.physics.arcade.enable(diamond);
-      diamond.body.setSize(diamond.width * .75, diamond.height * .75, diamond.width * .125, diamond.height * .125);
-      
+      diamond.body.setSize(SPRITE_PIXEL_SIZE * .75, SPRITE_PIXEL_SIZE * .75, diamond.width * .125, diamond.height * .125);
       var maxVelocity = controls.hyperEnabled() ? 2000 : 200;
 
       diamond.body.velocity.x = game.rnd.integerInRange(-maxVelocity, maxVelocity)
@@ -189,15 +198,15 @@ var Planetoids = (function (controls) {
   
   function wrapDiamond(diamond) {
       if (diamond.x > game.width) {
-          diamond.x = 0 - diamond.width;
+          diamond.x -= (SCREEN_SIZE + diamond.width);
       } else if (diamond.x + diamond.width < 0) {
-          diamond.x = game.width;
+          diamond.x += (SCREEN_SIZE + diamond.width);
       }
   
       if (diamond.y > game.height) {
-          diamond.y = 0 - diamond.height;
+          diamond.y -= (SCREEN_SIZE + diamond.height);
       } else if (diamond.y + diamond.height < 0) {
-          diamond.y = game.height;
+          diamond.y += (SCREEN_SIZE + diamond.height);
       }
   }
   

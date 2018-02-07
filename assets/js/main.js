@@ -30,6 +30,12 @@ function preload() {
 function create() {
     gameState = GAME_STATE.NEW_GAME;
 
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.UP);
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.DOWN);
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.LEFT);
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.RIGHT);
+    game.input.keyboard.addKeyCapture(Phaser.Keyboard.SPACEBAR);
+
     planetoids.create();
     neat.initializeInput();
 }

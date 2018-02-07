@@ -41,7 +41,7 @@ var NeatUi = (function (neat) {
     inputGraphics.lineStyle(1, 0x000, 1);
 
     drawPlayer();
-    drawEnemies();
+    drawEnemies(input);
   }
 
   function drawPlayer() {

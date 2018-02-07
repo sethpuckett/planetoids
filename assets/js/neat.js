@@ -34,27 +34,27 @@ var Neat = (function () {
       }
     }
 
-    var xOffset = player.x - (SCREEN_SIZE / 2);
-    var yOffset = player.y - (SCREEN_SIZE / 2);
+    var xOffset = player.x - (SCREEN_SIZE_WITH_BUFFER / 2);
+    var yOffset = player.y - (SCREEN_SIZE_WITH_BUFFER / 2);
 
     enemies.forEach(function(enemy) {
-      var adjustedX = enemy.x + xOffset;
-      var adjustedY = enemy.y + yOffset;
+      var adjustedX = enemy.x - xOffset;
+      var adjustedY = enemy.y - yOffset;
 
       if (adjustedX <= 0) {
-        adjustedX += SCREEN_SIZE;
-      } else if (adjustedX >= SCREEN_SIZE) {
-        adjustedX -= SCREEN_SIZE;
+        adjustedX += SCREEN_SIZE_WITH_BUFFER;
+      } else if (adjustedX >= SCREEN_SIZE_WITH_BUFFER) {
+        adjustedX -= SCREEN_SIZE_WITH_BUFFER;
       }
 
       if (adjustedY <= 0) {
-        adjustedY += SCREEN_SIZE;
-      } else if (adjustedY >= SCREEN_SIZE) {
-        adjustedY -= SCREEN_SIZE;
+        adjustedY += SCREEN_SIZE_WITH_BUFFER;
+      } else if (adjustedY >= SCREEN_SIZE_WITH_BUFFER) {
+        adjustedY -= SCREEN_SIZE_WITH_BUFFER;
       }
 
-      inputX = Math.min(19, parseInt((adjustedX / SCREEN_SIZE) * NEAT_INPUT_SIZE));
-      inputY = Math.min(19, parseInt((adjustedY / SCREEN_SIZE) * NEAT_INPUT_SIZE));
+      inputX = parseInt((adjustedX / SCREEN_SIZE_WITH_BUFFER) * NEAT_INPUT_SIZE);
+      inputY = parseInt((adjustedY / SCREEN_SIZE_WITH_BUFFER) * NEAT_INPUT_SIZE);
       input[inputX][inputY] = true;
     });
 
