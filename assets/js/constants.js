@@ -39,3 +39,11 @@ var GAME_STATE = {
   IN_GAME: 2,
   END_GAME: 3
 };
+
+var OUTPUT_COUNT = 4;
+var OUTPUT = {
+  UP: 1,
+  DOWN: 2,
+  LEFT: 3,
+  RIGHT: 4
+};
