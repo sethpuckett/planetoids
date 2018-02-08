@@ -127,6 +127,12 @@ var Planetoids = (function (controls) {
         startGame();
     }
   }
+
+  function getScore() {
+      return score;
+  }
+
+  // Private Functions
   
   function createPlanetoid() {
       var rand = game.rnd.integerInRange(0, 3);
@@ -233,6 +239,7 @@ var Planetoids = (function (controls) {
     inGameUpdate: inGameUpdate,
     endGameUpdate: endGameUpdate,
     getPlayer: getPlayer,
-    getEnemies: getEnemies
+    getEnemies: getEnemies,
+    getScore: getScore
   };
 }(Controls));

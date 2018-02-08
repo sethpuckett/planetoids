@@ -1,7 +1,8 @@
-var Neat = (function () {
+var Neat = (function (planetoids) {
 
   var input;
   var pool;
+  var dead;
 
   var keystate = {
       left: false,
@@ -71,6 +72,35 @@ var Neat = (function () {
     initializeRun();
   }
 
+  function update() {
+    var species = pool.species[pool.currentSpecies];
+    var genome = species.genmoes[pool.currentGenome];
+
+    // displayGenome();
+
+    evaluateCurrent();
+    getPositions();
+
+    if (dead) {
+      var fitness = planetoids.getScore();
+      genome.fitness = fitness;
+  
+      if (fitness > pool.maxFitness) {
+        pool.maxFitness = fitness;
+      }
+
+      pool.currentSpecies = 1;
+      pool.currentGenome = 1;
+      while (fitnessAlreadymeasured()) {
+        nextGenome();
+      }
+
+      initializeRun();
+    }
+          
+    pool.currentFrame = pool.currentFrame + 1
+  }
+
   // Private Functions
 
   function newPool() {
@@ -126,6 +156,93 @@ var Neat = (function () {
     genome.maxNeuron = INPUT_COUNT;
     mutate(genome);
     return genome;
+  }
+
+  function fitnessAlreadymeasured() {
+    var species = pool.species[pool.currentSpecies];
+    var genome = species.genomes[pool.currentGenome];
+   
+    return genome.fitness != 0;
+  }
+
+  function nextGenome() {
+    pool.currentGenome++;
+    if (pool.currentGenome >= pool.species[pool.currentSpecies].genomes.length) {
+      pool.currentGenome = 1;
+      pool.currentSpecies++;
+      if (pool.currentSpecies >= pool.species.length) {
+        newGeneration();
+        pool.currentSpecies = 1;
+      }
+    }
+  }
+
+  function newGeneration() {
+    cullSpecies(false);
+    rankGlobally();
+    removeStaleSpecies();
+    rankGlobally();
+
+    for (var species in pool.species) {
+      calculateAverageFitness(species);
+    }
+
+    removeWeakSpecies();
+
+    var sum = totalAverageFitness();
+    var children = [];
+
+    for (var species in pool.species) {
+      var breed = Math.floor(species.averageFitness / sum * POPULATION) - 1;
+      for (var i = 0; i < breed; i++) {
+        children.push(breedChild(species));
+      }
+    }
+
+    cullSpecies(true);
+
+    while (children.length + pool.species.length < POPULATION) {
+      var species = pool.species[getRandomInt(0, pool.species.length)];
+      children.push(breedChild(species));
+    }
+
+    for (var child in children) {
+      addToSpecies(child);
+    }
+
+    pool.generation++;
+  }
+
+  function cullSpecies(cutToOne) {
+
+  }
+
+  function rankGlobally() {
+
+  }
+
+  function removeStaleSpecies() {
+
+  }
+
+  function rankGlobally() {
+
+  }
+
+  function calculateAverageFitness(species) {
+
+  }
+
+  function removeWeakSpecies() {
+
+  }
+
+  function totalAverageFitness() {
+
+  }
+
+  function breedChild(species) {
+    
   }
 
   function addToSpecies(childGenome) {
@@ -286,17 +403,53 @@ var Neat = (function () {
   }
 
   function evaluateNetwork(network) {
-    
+
+    // table.insert(inputs, 1) // TODO: What does this do?
+
+    for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
+      for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
+        var index = (i * NEAT_INPUT_SIZE) + j;
+        network.neurons[index].value = input[i][j];
+      }
+    }
+
+    for (var neuron in network.neurons) {
+      var sum = 0;
+      for (var i = 0; i < neuron.incoming.length; i++) {
+        var incoming = neuron.incoming[i];
+        var other = network.neurons[incoming.into];
+        sum += incoming.weight * other.value;
+      }
+
+      if (neuron.incoming > 0) {
+        neuron.value = sigmoid(sum);
+      }
+    }
+
+    keystate.up = isOutputActive(network, OUTPUT.UP);
+    keystate.down = isOutputActive(network, OUTPUT.DOWN);
+    keystate.left = isOutputActive(network, OUTPUT.LEFT);
+    keystate.right = isOutputActive(network, OUTPUT.RIGHT);
+  }
+
+  function isOutputActive(network, output) {
+    return network.neurons[MAX_NODES + output].value > 0;
   }
 
   function getRandomBool() {
     return Math.random() >= 0.5;
   }
 
+  function getRandomInt(min, max) {
+    return min + Math.floor(Math.random() * Math.floor(max - min));
+  }
+
   return {
     getKeystate: getKeystate,
     getInput: getInput,
     initializeInput: initializeInput,
-    updateInput: updateInput
+    updateInput: updateInput,
+    initializePool: initializePool,
+    update: update
   };
-}());
+}(Planetoids));
