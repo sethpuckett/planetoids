@@ -38,6 +38,7 @@ function create() {
 
     planetoids.create();
     neat.initializeInput();
+    neat.initializePool();
 }
 
 function update() {
@@ -51,6 +52,7 @@ function update() {
         planetoids.newGameUpdate(keystate);
     } else if (gameState == GAME_STATE.IN_GAME) {
         neat.updateInput(planetoids.getPlayer(), planetoids.getEnemies());
+        neat.update();
         planetoids.inGameUpdate(keystate);
     } else if (gameState == GAME_STATE.END_GAME) {
         planetoids.endGameUpdate(keystate);

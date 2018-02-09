@@ -214,35 +214,154 @@ var Neat = (function (planetoids) {
   }
 
   function cullSpecies(cutToOne) {
+    for (var species in pool.species) {
+      species.genomes.sort(function(a, b) {
+        return a.fitness > b.fitness;
+      });
 
+      var remaining = Math.ceil(species.genomes.length / 2);
+
+      if (cutToOne) {
+        reamining = 1;
+      }
+
+      species.genomes.splice(remaining);
+    }
   }
 
   function rankGlobally() {
-
+    var global = [];
+    for (var species in pool.species) {
+      Array.push.apply(global, species.genomes);
+    }
+    global.sort(function(a, b) {
+      return a.fitness < b.fitness;
+    });
+    for (var i = 0; i < global.length; i++) {
+      global[i].globalRank = i + 1;
+    }
   }
 
   function removeStaleSpecies() {
+    var survived = [];
 
-  }
+    for (var species in pool.species) {
+      species.genomes.sort(function(a, b) {
+        return a.fitness > b.fitness;
+      });
 
-  function rankGlobally() {
+      if (species.genomes[0].fitness > species.topFitness) {
+        species.topFitness = species.genomes[0].fitness;
+        species.stalenss = 0;
+      } else {
+        species.staleness++;
+      }
 
+      if (species.staleness < STALE_SPECIES || species.topFitness >= pool.maxFitness) {
+        survived.push(species);
+      }
+    }
+
+    pool.species = survived; 
   }
 
   function calculateAverageFitness(species) {
+    var total = 0;
 
+    for (var genome in species.genomes) {
+      total += genome.globalRank;
+    }
+
+    species.averageFitness = total / species.genomes.length;
   }
 
   function removeWeakSpecies() {
+    var survived = [];
 
+    var sum = totalAverageFitness();
+
+    for (var species in pool.species) {
+      var breed = Math.floor(species.averageFitness / sum * POPULATION);
+      if (breed >= 1) {
+        survived.push(species);
+      }
+    }
+
+    pool.species = survived;
   }
 
   function totalAverageFitness() {
-
+    var total = 0;
+    for (var species in pool.species) {
+      total += species.averageFitness;
+    }
+    return total;
   }
 
   function breedChild(species) {
-    
+    var child = [];
+    if (Math.random() < CROSSOVER_CHANCE) {
+      var g1 = species.genomes[getRandomInt(0, species.genomes.length - 1)];
+      var g2 = species.genomes[getRandomInt(0, species.genomes.length - 1)];
+      child = crossover(g1, g2);
+    } else {
+      var g = species.genomes[getRandomInt(0, species.genomes.length - 1)];
+      child = copyGenome(g);
+    }
+
+    mutate(child);
+
+    return child;
+  }
+
+  function crossover(genome1, genome2) {
+    if (genome2.fitness > genome1.fitness) {
+      var temp = genome1;
+      genome1 = genome2;
+      genome2 = temp;
+    } 
+
+    var child = newGenome();
+    var innovations2 = [];
+
+    for (var gene in genome2.genes) {
+      innovations2[gene.innovation] = gene;
+    }
+
+    for (var gene in genome1.genes) {
+      var gene2 = innovations2[gene.innovation];
+      if (gene2 != null && getRandomBool() && gene2.enabled) {
+        child.genes.push(copyGene(gene2));
+      } else {
+        child.genes.push(copyGene(gene1));
+      }
+    }
+
+    child.maxNeuron = Math.max(genome1.maxNeuron, genome2.maxNeuron);
+
+    for (var prop in genome1.mutationRates) {
+      if (genome.mutationRates.hasOwnProperty(prop)) {
+          child.mutationRates[prop] = genome1.mutationRates[prop];
+      }
+    }
+
+    return child;
+  }
+
+  function copyGenome(genome) {
+    var newGenome = newGenome();
+    for (var i = 0; i < genome.genes.length; i++) {
+      newGenome.genes.push(copyGene(genome.genes[i]));
+    }
+    newGenome.maxNeuron = genome.maxNeuron;
+    newGenome.mutationRates.connections = genome.mutationRates.connections;
+    newGenome.mutationRates.link = genome.mutationRates.link;
+    newGenome.mutationRates.bias = genome.mutationRates.bias;
+    newGenome.mutationRates.node = genome.mutationRates.node;
+    newGenome.mutationRates.enable = genome.mutationRates.enable;
+    newGenome.mutationRates.disable = genome.mutationRates.disable;
+
+    return newGenome;
   }
 
   function addToSpecies(childGenome) {
@@ -275,12 +394,12 @@ var Neat = (function (planetoids) {
   }
 
   function mutate(genome) {
-    for (var prop in genome) {
-      if (genome.hasOwnProperty(prop)) {
+    for (var prop in genome.mutationRates) {
+      if (genome.mutationRates.hasOwnProperty(prop)) {
         if (getRandomBool()) {
-          genome[prop] = genome[prop] * .95;
+          genome.mutationRates[prop] = genome.mutationRates[prop] * .95;
         } else {
-          genome[prop] = genome[prop] * 1.05263;
+          genome.mutationRates[prop] = genome.mutationRates[prop] * 1.05263;
         }
       }
     }
