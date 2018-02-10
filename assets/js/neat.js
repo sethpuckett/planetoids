@@ -74,12 +74,11 @@ var Neat = (function (planetoids) {
 
   function update() {
     var species = pool.species[pool.currentSpecies];
-    var genome = species.genmoes[pool.currentGenome];
+    var genome = species.genomes[pool.currentGenome];
 
     // displayGenome();
 
     evaluateCurrent();
-    getPositions();
 
     if (dead) {
       var fitness = planetoids.getScore();
@@ -89,8 +88,8 @@ var Neat = (function (planetoids) {
         pool.maxFitness = fitness;
       }
 
-      pool.currentSpecies = 1;
-      pool.currentGenome = 1;
+      pool.currentSpecies = 0;
+      pool.currentGenome = 0;
       while (fitnessAlreadymeasured()) {
         nextGenome();
       }
@@ -107,9 +106,9 @@ var Neat = (function (planetoids) {
     return {
       species: [],
       generation: 0,
-      innovation: OUTPUTS,
-      currentSpecies: 1,
-      currentGenome: 1,
+      innovation: OUTPUT_COUNT,
+      currentSpecies: 0,
+      currentGenome: 0,
       currentFrame: 0,
       maxFitness: 0
     };
@@ -168,11 +167,11 @@ var Neat = (function (planetoids) {
   function nextGenome() {
     pool.currentGenome++;
     if (pool.currentGenome >= pool.species[pool.currentSpecies].genomes.length) {
-      pool.currentGenome = 1;
+      pool.currentGenome = 0;
       pool.currentSpecies++;
       if (pool.currentSpecies >= pool.species.length) {
         newGeneration();
-        pool.currentSpecies = 1;
+        pool.currentSpecies = 0;
       }
     }
   }
@@ -183,7 +182,8 @@ var Neat = (function (planetoids) {
     removeStaleSpecies();
     rankGlobally();
 
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       calculateAverageFitness(species);
     }
 
@@ -192,7 +192,8 @@ var Neat = (function (planetoids) {
     var sum = totalAverageFitness();
     var children = [];
 
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       var breed = Math.floor(species.averageFitness / sum * POPULATION) - 1;
       for (var i = 0; i < breed; i++) {
         children.push(breedChild(species));
@@ -206,7 +207,8 @@ var Neat = (function (planetoids) {
       children.push(breedChild(species));
     }
 
-    for (var child in children) {
+    for (var childIndex in children) {
+      var child = children[childIndex];
       addToSpecies(child);
     }
 
@@ -214,7 +216,8 @@ var Neat = (function (planetoids) {
   }
 
   function cullSpecies(cutToOne) {
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       species.genomes.sort(function(a, b) {
         return a.fitness > b.fitness;
       });
@@ -231,7 +234,8 @@ var Neat = (function (planetoids) {
 
   function rankGlobally() {
     var global = [];
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       Array.push.apply(global, species.genomes);
     }
     global.sort(function(a, b) {
@@ -245,7 +249,8 @@ var Neat = (function (planetoids) {
   function removeStaleSpecies() {
     var survived = [];
 
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       species.genomes.sort(function(a, b) {
         return a.fitness > b.fitness;
       });
@@ -268,7 +273,8 @@ var Neat = (function (planetoids) {
   function calculateAverageFitness(species) {
     var total = 0;
 
-    for (var genome in species.genomes) {
+    for (var genomeIndex in species.genomes) {
+      var genome = species.genomes[genomeIndex];
       total += genome.globalRank;
     }
 
@@ -280,7 +286,8 @@ var Neat = (function (planetoids) {
 
     var sum = totalAverageFitness();
 
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       var breed = Math.floor(species.averageFitness / sum * POPULATION);
       if (breed >= 1) {
         survived.push(species);
@@ -292,7 +299,8 @@ var Neat = (function (planetoids) {
 
   function totalAverageFitness() {
     var total = 0;
-    for (var species in pool.species) {
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
       total += species.averageFitness;
     }
     return total;
@@ -324,11 +332,13 @@ var Neat = (function (planetoids) {
     var child = newGenome();
     var innovations2 = [];
 
-    for (var gene in genome2.genes) {
+    for (var geneIndex in genome2.genes) {
+      var gene = genome2[geneIndex];
       innovations2[gene.innovation] = gene;
     }
 
-    for (var gene in genome1.genes) {
+    for (var geneIndex in genome1.genes) {
+      var gene = genome1.genes[geneIndex];
       var gene2 = innovations2[gene.innovation];
       if (gene2 != null && getRandomBool() && gene2.enabled) {
         child.genes.push(copyGene(gene2));
@@ -367,8 +377,9 @@ var Neat = (function (planetoids) {
   function addToSpecies(childGenome) {
     var foundSpecies = false;
 
-    for (var species in pool.species) {
-      if (sameSpecies(childGenome, species.genome[0])) { // TODO: why only checking first element?
+    for (var speciesIndex in pool.species) {
+      var species = pool.species[speciesIndex];
+      if (species.genomes.length > 0 && sameSpecies(childGenome, species.genomes[0])) { // TODO: why only checking first element?
         species.genomes.push(childGenome);
         foundSpecies = true;
         break;
@@ -377,7 +388,7 @@ var Neat = (function (planetoids) {
 
     if (!foundSpecies) {
       var childSpecies = newSpecies();
-      childSpecies.genomes.push(child);
+      childSpecies.genomes.push(childGenome);
       pool.species.push(childSpecies);
     }
   }
@@ -405,18 +416,18 @@ var Neat = (function (planetoids) {
     }
   }
 
-  function sameSpecies(genome1, genome2)
-    var dd = DELTA_DISJOINT * disjoint(genome1.genes, genome2.genes)
-    var dw = DELTA_WEIGHT * weights(genome1.genes, genome2.genes)
-    return dd + dw < DELTA_THRESHOLD
-  end
+  function sameSpecies(genome1, genome2) {
+    var dd = DELTA_DISJOINT * disjoint(genome1.genes, genome2.genes);
+    var dw = DELTA_WEIGHTS * weights(genome1.genes, genome2.genes);
+    return dd + dw < DELTA_THRESHOLD;
+  }
 
   function clearJoypad() {
-    keypad.left = false;
-    keypad.right = true;
-    keypad.up = false;
-    keypad.down = false;
-    keypad.space = true;
+    keystate.left = false;
+    keystate.right = true;
+    keystate.up = false;
+    keystate.down = false;
+    keystate.space = true;
   }
 
   function generateNetwork(genome) {
@@ -435,7 +446,8 @@ var Neat = (function (planetoids) {
       return a.out < b.out;
     });
   
-    for (var gene in genome.genes) {
+    for (var geneIndex in genome.genes) {
+      var gene = geneome.genes[geneIndex];
       if (gene.enabled) {
         if (network.neurons[gene.out] == null) {
           network.neurons[gene.out] = newNeuron();
@@ -474,48 +486,62 @@ var Neat = (function (planetoids) {
     var i1 = [];
     var i2 = [];
 
-    for (var gene in genes1) {
+    for (var geneIndex in genes1) {
+      var gene = genes1[geneIndex];
       i1[gene.innovation] = true;
     }
 
-    for (var gene in genes2) {
+    for (var geneIndex in genes2) {
+      var gene = genes2[geneIndex];
       i2[gene.innovation] = true;
     }
 
     var disjointGenes = 0;
 
-    for (var gene in genes1) {
+    for (var geneIndex in genes1) {
+      var gene = genes1[geneIndex];
       if (i2[gene.innovation] == null) {
         disjointGenes++;
       }
     }
 
-    for (var gene in genes2) {
+    for (var geneIndex in genes2) {
+      var gene = genes2[geneIndex];
       if (i1[gene.innovation] == null) {
         disjointGenes++;
       }
     }
 
     var maxGeneCount = Math.max(genes1.length, genes2.length);
+    if (maxGeneCount < 10) {
+      maxGeneCount = 1;
+    }
+
     return disjointGenes / maxGeneCount;
   }
 
   function weights(genes1, genes2) {
     var i2 = [];
 
-    for (var gene in genes2) {
+    for (var geneIndex in genes2) {
+      var gene = genes2[geneIndex];
       i2[gene.innovation] = gene;
     }
 
     var sum = 0;
     var coincident = 0;
 
-    for (var gene in genes1) {
+    for (var geneIndex in genes1) {
+      var gene = genes1[geneIndex];
       if (i2[gene.innovation] != null) {
         var gene2 = i2[gene.innovation];
         sum += Math.abs(gene.weight - gene2.weight);
         coincident++;
       }
+    }
+
+    if (coincident == 0) {
+      coincident = 1;
     }
 
     return sum / coincident;
@@ -532,7 +558,8 @@ var Neat = (function (planetoids) {
       }
     }
 
-    for (var neuron in network.neurons) {
+    for (var neuronIndex in network.neurons) {
+      var neuron = network.neurons[neuronIndex];
       var sum = 0;
       for (var i = 0; i < neuron.incoming.length; i++) {
         var incoming = neuron.incoming[i];
