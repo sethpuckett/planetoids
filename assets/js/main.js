@@ -55,12 +55,16 @@ function update() {
         neat.update();
         planetoids.inGameUpdate(keystate);
     } else if (gameState == GAME_STATE.END_GAME) {
+        neat.update();        
         planetoids.endGameUpdate(keystate);
     }
 
     var stateChangeRequest = planetoids.requestedState();
     if (stateChangeRequest != null) {
         gameState = stateChangeRequest;
+        if (gameState == GAME_STATE.END_GAME) {
+            neat.kill();
+        }
     }
 }
 

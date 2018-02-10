@@ -20,6 +20,10 @@ var Neat = (function (planetoids) {
     return input;
   }
 
+  function kill() {
+    dead = true;
+  }
+
   function initializeInput() {
     input = [];
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
@@ -95,6 +99,7 @@ var Neat = (function (planetoids) {
       }
 
       initializeRun();
+      dead = false;
     }
           
     pool.currentFrame = pool.currentFrame + 1
@@ -219,7 +224,7 @@ var Neat = (function (planetoids) {
     for (var speciesIndex in pool.species) {
       var species = pool.species[speciesIndex];
       species.genomes.sort(function(a, b) {
-        return a.fitness > b.fitness;
+        return b.fitness - a.fitness;
       });
 
       var remaining = Math.ceil(species.genomes.length / 2);
@@ -236,10 +241,10 @@ var Neat = (function (planetoids) {
     var global = [];
     for (var speciesIndex in pool.species) {
       var species = pool.species[speciesIndex];
-      Array.push.apply(global, species.genomes);
+      global = global.concat(species.genomes);
     }
     global.sort(function(a, b) {
-      return a.fitness < b.fitness;
+      return b.fitness - a.fitness;
     });
     for (var i = 0; i < global.length; i++) {
       global[i].globalRank = i + 1;
@@ -252,12 +257,12 @@ var Neat = (function (planetoids) {
     for (var speciesIndex in pool.species) {
       var species = pool.species[speciesIndex];
       species.genomes.sort(function(a, b) {
-        return a.fitness > b.fitness;
+        return b.fitness - a.fitness;
       });
 
       if (species.genomes[0].fitness > species.topFitness) {
         species.topFitness = species.genomes[0].fitness;
-        species.stalenss = 0;
+        species.staleness = 0;
       } else {
         species.staleness++;
       }
@@ -270,6 +275,7 @@ var Neat = (function (planetoids) {
     pool.species = survived; 
   }
 
+  // TODO: bad name. actually calculating average rank
   function calculateAverageFitness(species) {
     var total = 0;
 
@@ -350,7 +356,7 @@ var Neat = (function (planetoids) {
     child.maxNeuron = Math.max(genome1.maxNeuron, genome2.maxNeuron);
 
     for (var prop in genome1.mutationRates) {
-      if (genome.mutationRates.hasOwnProperty(prop)) {
+      if (genome1.mutationRates.hasOwnProperty(prop)) {
           child.mutationRates[prop] = genome1.mutationRates[prop];
       }
     }
@@ -443,7 +449,7 @@ var Neat = (function (planetoids) {
     }
 
     genome.genes.sort(function (a, b) {
-      return a.out < b.out;
+      return b.out - a.out;
     });
   
     for (var geneIndex in genome.genes) {
@@ -596,6 +602,7 @@ var Neat = (function (planetoids) {
     initializeInput: initializeInput,
     updateInput: updateInput,
     initializePool: initializePool,
-    update: update
+    update: update,
+    kill: kill
   };
 }(Planetoids));
