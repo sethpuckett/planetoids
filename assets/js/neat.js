@@ -28,7 +28,7 @@ var Neat = (function (planetoids) {
     input = [];
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
       var row = new Array(NEAT_INPUT_SIZE);
-      row.fill(false);
+      row.fill(0);
       input.push(row);
     }
   }
@@ -36,7 +36,7 @@ var Neat = (function (planetoids) {
   function updateInput(player, enemies) {
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
       for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
-        input[i][j] = false;
+        input[i][j] = 0;
       }
     }
 
@@ -61,7 +61,7 @@ var Neat = (function (planetoids) {
 
       inputX = Math.min(NEAT_INPUT_SIZE - 1, parseInt((adjustedX / SCREEN_SIZE_WITH_BUFFER) * NEAT_INPUT_SIZE));
       inputY = Math.min(NEAT_INPUT_SIZE - 1, parseInt((adjustedY / SCREEN_SIZE_WITH_BUFFER) * NEAT_INPUT_SIZE));
-      input[inputX][inputY] = true;
+      input[inputX][inputY] = 1;
     });
   }
 
@@ -153,6 +153,27 @@ var Neat = (function (planetoids) {
       incoming: [],
       value: 0.0
     };
+  }
+
+  function newGene() {
+    return {
+      into: 0,
+      out: 0,
+      weight: 0.0,
+      enabled: true,
+      innovation: 0
+    };
+  }
+
+  function copyGene(gene) {
+    var gene2 = newGene();
+    gene2.into = gene.into;
+    gene2.out = gene.out;
+    gene2.weight = gene.weight;
+    gene2.enabled = gene.enabled;
+    gene2.innovation = gene.innovation;
+
+    return gene2;
   }
 
   function basicGenome() {
@@ -339,12 +360,12 @@ var Neat = (function (planetoids) {
     var innovations2 = [];
 
     for (var geneIndex in genome2.genes) {
-      var gene = genome2[geneIndex];
+      var gene = genome2.genes[geneIndex];
       innovations2[gene.innovation] = gene;
     }
 
     for (var geneIndex in genome1.genes) {
-      var gene = genome1.genes[geneIndex];
+      var gene1 = genome1.genes[geneIndex];
       var gene2 = innovations2[gene.innovation];
       if (gene2 != null && getRandomBool() && gene2.enabled) {
         child.genes.push(copyGene(gene2));
@@ -365,19 +386,19 @@ var Neat = (function (planetoids) {
   }
 
   function copyGenome(genome) {
-    var newGenome = newGenome();
+    var freshGenome = newGenome();
     for (var i = 0; i < genome.genes.length; i++) {
-      newGenome.genes.push(copyGene(genome.genes[i]));
+      freshGenome.genes.push(copyGene(genome.genes[i]));
     }
-    newGenome.maxNeuron = genome.maxNeuron;
-    newGenome.mutationRates.connections = genome.mutationRates.connections;
-    newGenome.mutationRates.link = genome.mutationRates.link;
-    newGenome.mutationRates.bias = genome.mutationRates.bias;
-    newGenome.mutationRates.node = genome.mutationRates.node;
-    newGenome.mutationRates.enable = genome.mutationRates.enable;
-    newGenome.mutationRates.disable = genome.mutationRates.disable;
+    freshGenome.maxNeuron = genome.maxNeuron;
+    freshGenome.mutationRates.connections = genome.mutationRates.connections;
+    freshGenome.mutationRates.link = genome.mutationRates.link;
+    freshGenome.mutationRates.bias = genome.mutationRates.bias;
+    freshGenome.mutationRates.node = genome.mutationRates.node;
+    freshGenome.mutationRates.enable = genome.mutationRates.enable;
+    freshGenome.mutationRates.disable = genome.mutationRates.disable;
 
-    return newGenome;
+    return freshGenome;
   }
 
   function addToSpecies(childGenome) {
@@ -420,12 +441,195 @@ var Neat = (function (planetoids) {
         }
       }
     }
+
+    if (Math.random() < genome.mutationRates.connections) {
+      pointMutate(genome);
+    }
+
+    var p = genome.mutationRates.link;
+    while (p > 0) {
+      if (Math.random() > p) {
+        linkMutate(genome, false);
+      }
+      p -= 1;
+    }
+
+    p = genome.mutationRates.bias;
+    while (p > 0) {
+      if (Math.random() > p) {
+        linkMutate(genome, true);
+      }
+      p -= 1;
+    }
+
+    p = genome.mutationRates.node;
+    while (p > 0) {
+      if (Math.random() > p) {
+        nodeMutate(genome);
+      }
+      p -= 1;
+    }
+
+    p = genome.mutationRates.enable;
+    while (p > 0) {
+      if (Math.random() > p) {
+        enableDisableMutate(genome, true);
+      }
+      p -= 1;
+    }
+
+    p = genome.mutationRates.disable;
+    while (p > 0) {
+      if (Math.random() > p) {
+        enableDisableMutate(genome, false);
+      }
+      p -= 1;
+    }
   }
 
   function sameSpecies(genome1, genome2) {
     var dd = DELTA_DISJOINT * disjoint(genome1.genes, genome2.genes);
     var dw = DELTA_WEIGHTS * weights(genome1.genes, genome2.genes);
     return dd + dw < DELTA_THRESHOLD;
+  }
+
+  function pointMutate(genome) {
+    var step = genome.mutationRates.step;
+    for (var geneIndex in genome.genes) {
+      var gene = genome.genes[geneIndex];
+      if (Math.random() < PERTURB_CHANCE) {
+        gene.weight = gene.weight + (Math.random() * step * 2) - step;
+      } else {
+        gene.weight = Math.random() * 4 - 2;
+      }
+    }
+  }
+
+  function linkMutate(genome, forceBias) {
+    var neuron1 = randomNeuron(genome.genes, false);
+    var neuron2 = randomNeuron(genome.genes, true);
+
+    var newLink = newGene();
+    if (neuron1 < INPUT_COUNT && neuron2 < INPUT_COUNT) {
+      return;
+    }
+
+    if (neuron2 < INPUT_COUNT) {
+      var temp = neuron1;
+      neuron1 = neuron2;
+      neuron2 = temp;
+    }
+
+    newLink.into = neuron1;
+    newLink.out = neuron2;
+
+    // TODO: What is this doing? should it be INPUT_COUNT - 1?
+    if (forceBias) {
+      newLink.into = INPUT_COUNT;
+    }
+
+    if (containsLink(genome.genes, newLink)) {
+      return;
+    }
+
+    newLink.innovation = newInnovation();
+    newLink.weight = Math.random() * 4 - 2;
+
+    genome.genes.push(newLink);
+  }
+
+  function nodeMutate(genome) {
+    if (genome.genes.length == 0) {
+      return;
+    }
+
+    genome.maxNeuron++;
+
+    var gene = genome.genes[getRandomInt(0, genome.genes.length - 1)];
+    if (!gene.enabled) {
+      return;
+    }
+    gene.enabled = false;
+
+    var gene1 = copyGene(gene);
+    gene1.out = genome.maxNeuron;
+    gene1.weight = 1.0;
+    gene1. innovation = newInnovation();
+    gene1.enabled = true;
+    genome.genes.push(gene1);
+
+    var gene2 = copyGene(gene);
+    gene2.into = genome.maxNeuron;
+    gene2.innovation = newInnovation();
+    gene2.enabled = true;
+    genome.genes.push(gene2);
+  }
+
+  function enableDisableMutate(genome, enable) {
+    var candidates = [];
+    for (var geneIndex in genome.genes) {
+      var gene = genome.genes[geneIndex];
+      if (gene.enabled != enable) {
+        candidates.push(gene);
+      }
+    }
+
+    if (candidates.length == 0) {
+      return;
+    }
+
+    var gene = candidates[getRandomInt(0, candidates.length - 1)];
+    gene.enabled = !gene.enabled;
+  }
+
+  function randomNeuron(genes, nonInput) {
+    var neurons = [];
+    if (!nonInput) {
+      for (var i = 0; i < INPUT_COUNT; i++) {
+        neurons[i] = true;
+      }
+    }
+
+    for (var i = 0; i < OUTPUT_COUNT; i++) {
+      neurons[MAX_NODES + i] = true;
+    }
+
+    for (var i = 0; i < genes.length; i++) {
+      if (!nonInput || genes[i].into > INPUT_COUNT) {
+        neurons[genes[i].into] = true;
+      }
+
+      if (!nonInput || genes[i].out > INPUT_COUNT) {
+        neurons[genes[i].out] = true;
+      }
+    }
+
+    var count = neurons.filter(x => typeof x !== 'undefined').length;
+    var n = getRandomInt(0, count - 1);
+
+    for (var neuronIndex in neurons) {
+      if (n == 0) {
+        return neuronIndex;
+      }
+      n--;
+    }
+
+    return 0;
+  }
+
+  function containsLink(genes, link) {
+    for (var geneIndex in genes) {
+      var gene = genes[geneIndex];
+      if (gene.into == link.into && gene.out == link.out) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function newInnovation() {
+    pool.innovation++;
+    return pool.innovation;
   }
 
   function clearJoypad() {
@@ -453,7 +657,7 @@ var Neat = (function (planetoids) {
     });
   
     for (var geneIndex in genome.genes) {
-      var gene = geneome.genes[geneIndex];
+      var gene = genome.genes[geneIndex];
       if (gene.enabled) {
         if (network.neurons[gene.out] == null) {
           network.neurons[gene.out] = newNeuron();
@@ -573,7 +777,7 @@ var Neat = (function (planetoids) {
         sum += incoming.weight * other.value;
       }
 
-      if (neuron.incoming > 0) {
+      if (neuron.incoming.length > 0) {
         neuron.value = sigmoid(sum);
       }
     }
@@ -582,6 +786,10 @@ var Neat = (function (planetoids) {
     keystate.down = isOutputActive(network, OUTPUT.DOWN);
     keystate.left = isOutputActive(network, OUTPUT.LEFT);
     keystate.right = isOutputActive(network, OUTPUT.RIGHT);
+  }
+
+  function sigmoid(x) {
+    return 2 / (1 + Math.exp(-4.9 * x)) - 1;
   }
 
   function isOutputActive(network, output) {
