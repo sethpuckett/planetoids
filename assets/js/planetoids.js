@@ -35,7 +35,10 @@ var Planetoids = (function (controls) {
 
       if (newHyperEnabled != hyperEnabled) {
         timer.stop();
-        var loopTime = newHyperEnabled ? 100 : 1000;
+        var loopTime = 500;
+        if (newHyperEnabled) {
+            loopTime /= HYPER_MULTIPLIER;
+        }
         timer.loop(loopTime, createPlanetoid, this);
         timer.start();
       }
@@ -46,7 +49,7 @@ var Planetoids = (function (controls) {
 
       var scoreAdd = scoreTimer.elapsed;
       if (newHyperEnabled) {
-          scoreAdd *= 10;
+          scoreAdd *= HYPER_MULTIPLIER;
       }
       score += scoreAdd;
   
@@ -78,6 +81,10 @@ var Planetoids = (function (controls) {
     return stateRequest;
   }
 
+  function clearStateChange() {
+      stateRequest = null;
+  }
+
   function startGame() {
     titleText.destroy();
     if (endScoreText != null) {
@@ -100,7 +107,10 @@ var Planetoids = (function (controls) {
     scoreTimer = game.time.create(false);
     scoreTimer.start();
 
-    var loopTime = controls.hyperEnabled() ? 100 : 1000;
+    var loopTime = 500;
+    if (controls.hyperEnabled()) {
+        loopTime /= HYPER_MULTIPLIER;
+    }
     timer = game.time.create(false);
     timer.loop(loopTime, createPlanetoid, this);
     timer.start();
@@ -156,7 +166,10 @@ var Planetoids = (function (controls) {
   
       game.physics.arcade.enable(diamond);
       diamond.body.setSize(SPRITE_PIXEL_SIZE * .75, SPRITE_PIXEL_SIZE * .75, diamond.width * .125, diamond.height * .125);
-      var maxVelocity = controls.hyperEnabled() ? 2000 : 200;
+      var maxVelocity = 200;
+      if (controls.hyperEnabled()) {
+        maxVelocity *= HYPER_MULTIPLIER;
+    }
 
       diamond.body.velocity.x = game.rnd.integerInRange(-maxVelocity, maxVelocity)
       diamond.body.velocity.y = game.rnd.integerInRange(-maxVelocity, maxVelocity)
@@ -168,9 +181,9 @@ var Planetoids = (function (controls) {
         var changeFactor = 1;
             
         if (newHyperEnabled) {
-            changeFactor = 10;
+            changeFactor = HYPER_MULTIPLIER;
         } else {
-            changeFactor = .1;
+            changeFactor = 1 / HYPER_MULTIPLIER;
         }
 
         diamonds.forEach(function(diamond) {
@@ -181,7 +194,10 @@ var Planetoids = (function (controls) {
   }
 
   function setPlayerVelocity(keystate, newHyperEnabled) {
-    var velocity = newHyperEnabled ? 1500: 150;
+    var velocity = 150;
+    if (newHyperEnabled) {
+        velocity *= HYPER_MULTIPLIER;
+    }
 
     if (keystate.left && !keystate.right)
     {
@@ -233,6 +249,7 @@ var Planetoids = (function (controls) {
   return {
     setGame: setGame,
     requestedState: requestedState,
+    clearStateChange: clearStateChange,
     preload: preload,
     create: create,
     newGameUpdate: newGameUpdate,

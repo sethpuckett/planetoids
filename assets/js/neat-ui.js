@@ -15,6 +15,9 @@ var NeatUi = (function (neat) {
   var leftButton;
   var rightButton;
 
+  var speciesText;
+  var genomeText;
+
   function preload() {
 
   }
@@ -24,15 +27,32 @@ var NeatUi = (function (neat) {
 
     staticGraphics = neatUiGame.add.graphics(0, 0);
     inputGraphics = neatUiGame.add.graphics(0, 0);
+    
+    createStatText();
 
     drawInputGrid();
     drawButtonOutputs();
+    drawStatLabels();
+  }
+
+  function createStatText() {
+    var xBase = INPUT_CELL_SIZE + 100;
+    var yBase = INPUT_GRID_SIZE + 10;
+    var yRow = 15;
+
+    var textStyle = { font: 'Bold 12pt Arial', fill: '#000' }
+
+    speciesText = neatUiGame.add.text(xBase, yBase + yRow * 0, '0', textStyle);
+    genomeText = neatUiGame.add.text(xBase, yBase + yRow * 1, '0', textStyle);
   }
 
   function update() {
     input = neat.getInput();
+    pool = neat.getPool();
+
     if (input != null) {
       drawInput(input);
+      drawStats(pool);
     }
   }
 
@@ -107,6 +127,22 @@ var NeatUi = (function (neat) {
     staticGraphics.drawRect(buttonX, buttonYBuffer + yBase + yMod * 1, buttonSize, buttonSize);
     staticGraphics.drawRect(buttonX, buttonYBuffer + yBase + yMod * 2, buttonSize, buttonSize);
     staticGraphics.drawRect(buttonX, buttonYBuffer + yBase + yMod * 3, buttonSize, buttonSize);
+  }
+
+  function drawStatLabels() {
+    var xBase = INPUT_CELL_SIZE;
+    var yBase = INPUT_GRID_SIZE + 10;
+    var yRow = 15;
+
+    var textStyle = { font: 'Bold 12pt Arial', fill: '#000' }
+
+    var speciesLabel = neatUiGame.add.text(xBase, yBase + yRow * 0, 'Species:', textStyle);
+    var genomeLabel = neatUiGame.add.text(xBase, yBase + yRow * 1, 'Genome:', textStyle);
+  }
+
+  function drawStats(pool) {
+    speciesText.text = pool.currentSpecies;
+    genomeText.text = pool.currentGenome;
   }
 
   return {

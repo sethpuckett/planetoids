@@ -62,6 +62,7 @@ function update() {
     var stateChangeRequest = planetoids.requestedState();
     if (stateChangeRequest != null) {
         gameState = stateChangeRequest;
+        planetoids.clearStateChange();
         if (gameState == GAME_STATE.END_GAME) {
             neat.kill();
         }

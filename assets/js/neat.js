@@ -20,6 +20,10 @@ var Neat = (function (planetoids) {
     return input;
   }
 
+  function getPool() {
+    return pool;
+  }
+
   function kill() {
     dead = true;
   }
@@ -807,6 +811,7 @@ var Neat = (function (planetoids) {
   return {
     getKeystate: getKeystate,
     getInput: getInput,
+    getPool: getPool,
     initializeInput: initializeInput,
     updateInput: updateInput,
     initializePool: initializePool,
