@@ -17,6 +17,11 @@ var NeatUi = (function (neat) {
 
   var speciesText;
   var genomeText;
+  var frameText;
+  var generationText;
+  var innovationText;
+  var maxFitnessTest;
+  var geneCountText;
 
   function preload() {
 
@@ -44,6 +49,11 @@ var NeatUi = (function (neat) {
 
     speciesText = neatUiGame.add.text(xBase, yBase + yRow * 0, '0', textStyle);
     genomeText = neatUiGame.add.text(xBase, yBase + yRow * 1, '0', textStyle);
+    frameText = neatUiGame.add.text(xBase, yBase + yRow * 2, '0', textStyle);
+    generationText = neatUiGame.add.text(xBase, yBase + yRow * 3, '0', textStyle);
+    innovationText = neatUiGame.add.text(xBase, yBase + yRow * 4, '0', textStyle);
+    maxFitnessText = neatUiGame.add.text(xBase, yBase + yRow * 5, '0', textStyle);
+    geneCountText = neatUiGame.add.text(xBase, yBase + yRow * 6, '0', textStyle);
   }
 
   function update() {
@@ -138,11 +148,21 @@ var NeatUi = (function (neat) {
 
     var speciesLabel = neatUiGame.add.text(xBase, yBase + yRow * 0, 'Species:', textStyle);
     var genomeLabel = neatUiGame.add.text(xBase, yBase + yRow * 1, 'Genome:', textStyle);
+    var frameLabel = neatUiGame.add.text(xBase, yBase + yRow * 2, 'Frame:', textStyle);
+    var generationLabel = neatUiGame.add.text(xBase, yBase + yRow * 3, 'Generation:', textStyle);
+    var innovationLabel = neatUiGame.add.text(xBase, yBase + yRow * 4, 'Innovation:', textStyle);
+    var maxFitnessLabel = neatUiGame.add.text(xBase, yBase + yRow * 5, 'Max Fitness:', textStyle);
+    var geneCountLabel = neatUiGame.add.text(xBase, yBase + yRow * 6, 'Gene Count:', textStyle);
   }
 
   function drawStats(pool) {
     speciesText.text = pool.currentSpecies;
     genomeText.text = pool.currentGenome;
+    frameText.text = pool.currentFrame;
+    generationText.text = pool.generation;
+    innovationText.text = pool.innovation;
+    maxFitnessTest = pool.maxFitness;
+    geneCountText = pool.species[pool.currentSpecies].genomes[pool.currentGenome].genes.length;
   }
 
   return {
