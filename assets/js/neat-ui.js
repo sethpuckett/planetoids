@@ -44,7 +44,7 @@ var NeatUi = (function (neat) {
 
   function createStatText() {
     var xBase = INPUT_CELL_SIZE + 100;
-    var yBase = INPUT_GRID_SIZE + 20;
+    var yBase = INPUT_GRID_SIZE + PADDING_SIZE * 2;
     var yRow = 15;
 
     var textStyle = { font: 'Bold 12pt Arial', fill: '#000' }
@@ -142,7 +142,7 @@ var NeatUi = (function (neat) {
 
   function drawStatLabels() {
     var xBase = INPUT_CELL_SIZE;
-    var yBase = INPUT_GRID_SIZE + PADDING_SIZE;
+    var yBase = INPUT_GRID_SIZE + PADDING_SIZE * 2;
     var yRow = 15;
 
     var textStyle = { font: 'Bold 12pt Arial', fill: '#000' }
