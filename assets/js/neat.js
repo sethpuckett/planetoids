@@ -459,13 +459,13 @@ var Neat = (function (planetoids) {
     }
 
     // TODO: better understanding of bias mutation
-    //p = genome.mutationRates.bias;
-    //while (p > 0) {
-    //  if (Math.random() > p) {
-    //    linkMutate(genome, true);
-    //  }
-    //  p -= 1;
-    //}
+    p = genome.mutationRates.bias;
+    while (p > 0) {
+      if (Math.random() > p) {
+        linkMutate(genome, true);
+      }
+      p -= 1;
+    }
 
     p = genome.mutationRates.node;
     while (p > 0) {
