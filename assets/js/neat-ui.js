@@ -123,10 +123,9 @@ var NeatUi = (function (neat) {
 
   function drawButtonOutputs() {
     var textX = NEAT_UI_WIDTH - NEAT_UI_WIDTH / 4;
-    var buttonX = textX - INPUT_CELL_SIZE * 5;
-    var buttonSize = INPUT_CELL_SIZE * 2;
+    var buttonX = textX - INPUT_GRID_SIZE / 4 - 5;
+    var buttonSize = INPUT_GRID_SIZE / 4 - 5;
     
-    var yButtonBuffer = PADDING_SIZE;
     var yBase = PADDING_SIZE * 2;
     var yMod = (INPUT_GRID_SIZE / 4);
     var textStyle = { font: 'Bold 18pt Arial', fill: '#000' }
@@ -137,10 +136,10 @@ var NeatUi = (function (neat) {
     RightText = neatUiGame.add.text(textX, yBase + yMod * 3, 'Right', textStyle);
     
     staticGraphics.lineStyle(1, 0x000000, 1);
-    staticGraphics.drawRect(buttonX, yButtonBuffer + yBase + yMod * 0, buttonSize, buttonSize);
-    staticGraphics.drawRect(buttonX, yButtonBuffer + yBase + yMod * 1, buttonSize, buttonSize);
-    staticGraphics.drawRect(buttonX, yButtonBuffer + yBase + yMod * 2, buttonSize, buttonSize);
-    staticGraphics.drawRect(buttonX, yButtonBuffer + yBase + yMod * 3, buttonSize, buttonSize);
+    staticGraphics.drawRect(buttonX, yBase + yMod * 0, buttonSize, buttonSize);
+    staticGraphics.drawRect(buttonX, yBase + yMod * 1, buttonSize, buttonSize);
+    staticGraphics.drawRect(buttonX, yBase + yMod * 2, buttonSize, buttonSize);
+    staticGraphics.drawRect(buttonX, yBase + yMod * 3, buttonSize, buttonSize);
   }
 
   function drawStatLabels() {
@@ -193,9 +192,10 @@ var NeatUi = (function (neat) {
       var yMod = (INPUT_GRID_SIZE / 4);
 
       var textX = NEAT_UI_WIDTH - NEAT_UI_WIDTH / 4;
-      var buttonX = textX - INPUT_CELL_SIZE * 5;
+      var buttonX = textX - INPUT_GRID_SIZE / 4 - 5;
+      var buttonSize = INPUT_GRID_SIZE / 4 - 5;
 
-      var xDrawTo = buttonX + INPUT_CELL_SIZE;
+      var xDrawTo = buttonX + (INPUT_GRID_SIZE / 4 - 5) / 2;
       var yDrawTo = yBase + (yMod * yOutput);
 
       if (gene.into < INPUT_COUNT && yOutput >= 0) {
