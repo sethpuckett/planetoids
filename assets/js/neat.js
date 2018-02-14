@@ -441,7 +441,7 @@ var Neat = (function (planetoids) {
         if (getRandomBool()) {
           genome.mutationRates[prop] = genome.mutationRates[prop] * .95;
         } else {
-          genome.mutationRates[prop] = genome.mutationRates[prop] * 1.05263;
+          genome.mutationRates[prop] = genome.mutationRates[prop] * 1.05;
         }
       }
     }
@@ -458,13 +458,14 @@ var Neat = (function (planetoids) {
       p -= 1;
     }
 
-    p = genome.mutationRates.bias;
-    while (p > 0) {
-      if (Math.random() > p) {
-        linkMutate(genome, true);
-      }
-      p -= 1;
-    }
+    // TODO: better understanding of bias mutation
+    //p = genome.mutationRates.bias;
+    //while (p > 0) {
+    //  if (Math.random() > p) {
+    //    linkMutate(genome, true);
+    //  }
+    //  p -= 1;
+    //}
 
     p = genome.mutationRates.node;
     while (p > 0) {
