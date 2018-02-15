@@ -70,7 +70,7 @@ var Neat = (function (planetoids) {
   }
 
   function initializePool() {
-    pool = newPool()
+    pool = newPool();
 
     for (var i = 0; i < POPULATION; i++) {
       var basic = basicGenome();
@@ -769,7 +769,7 @@ var Neat = (function (planetoids) {
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
       for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
         var index = (i * NEAT_INPUT_SIZE) + j;
-        network.neurons[index].value = input[i][j];
+        network.neurons[index].value = input[j][i];
       }
     }
 
@@ -807,6 +807,16 @@ var Neat = (function (planetoids) {
 
   function getRandomInt(min, max) {
     return min + Math.floor(Math.random() * Math.floor(max - min));
+  }
+
+  function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
   return {
