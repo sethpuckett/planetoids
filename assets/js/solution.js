@@ -17,14 +17,14 @@ var Solution = (function () {
     genes.push(getGene(46, OUTPUT.DOWN, .8));
     genes.push(getGene(47, OUTPUT.DOWN, .8));
     genes.push(getGene(48, OUTPUT.DOWN, 1));
-    genes.push(getGene(49, OUTPUT.DOWN, 1));
+    genes.push(getGene(49, OUTPUT.DOWN, 1.7));
     genes.push(getGene(50, OUTPUT.DOWN, 1));
     genes.push(getGene(51, OUTPUT.DOWN, .8));
     genes.push(getGene(52, OUTPUT.DOWN, .8));
 
     genes.push(getGene(36, OUTPUT.DOWN, .5));
     genes.push(getGene(37, OUTPUT.DOWN, .5));
-    genes.push(getGene(38, OUTPUT.DOWN, 1));
+    genes.push(getGene(38, OUTPUT.DOWN, 1.5));
     genes.push(getGene(39, OUTPUT.DOWN, .5));
     genes.push(getGene(40, OUTPUT.DOWN, .5));
 
@@ -36,14 +36,14 @@ var Solution = (function () {
     genes.push(getGene(68, OUTPUT.UP, .8));
     genes.push(getGene(69, OUTPUT.UP, .8));
     genes.push(getGene(70, OUTPUT.UP, 1));
-    genes.push(getGene(71, OUTPUT.UP, 1));
+    genes.push(getGene(71, OUTPUT.UP, 1.7));
     genes.push(getGene(72, OUTPUT.UP, 1));
     genes.push(getGene(73, OUTPUT.UP, .8));
     genes.push(getGene(74, OUTPUT.UP, .8));
 
     genes.push(getGene(80, OUTPUT.UP, .5));
     genes.push(getGene(81, OUTPUT.UP, .5));
-    genes.push(getGene(82, OUTPUT.UP, 1));
+    genes.push(getGene(82, OUTPUT.UP, 1.5));
     genes.push(getGene(83, OUTPUT.UP, .5));
     genes.push(getGene(84, OUTPUT.UP, .5));
 
@@ -55,14 +55,14 @@ var Solution = (function () {
     genes.push(getGene(26, OUTPUT.RIGHT, .8));
     genes.push(getGene(37, OUTPUT.RIGHT, .8));
     genes.push(getGene(48, OUTPUT.RIGHT, 1));
-    genes.push(getGene(59, OUTPUT.RIGHT, 1));
+    genes.push(getGene(59, OUTPUT.RIGHT, 1.7));
     genes.push(getGene(70, OUTPUT.RIGHT, 1));
     genes.push(getGene(81, OUTPUT.RIGHT, .8));
     genes.push(getGene(92, OUTPUT.RIGHT, .8));
 
     genes.push(getGene(36, OUTPUT.RIGHT, .5));
     genes.push(getGene(47, OUTPUT.RIGHT, .5));
-    genes.push(getGene(58, OUTPUT.RIGHT, 1));
+    genes.push(getGene(58, OUTPUT.RIGHT, 1.5));
     genes.push(getGene(70, OUTPUT.RIGHT, .5));
     genes.push(getGene(81, OUTPUT.RIGHT, .5));
 
@@ -74,14 +74,14 @@ var Solution = (function () {
     genes.push(getGene(28, OUTPUT.LEFT, .8));
     genes.push(getGene(39, OUTPUT.LEFT, .8));
     genes.push(getGene(50, OUTPUT.LEFT, 1));
-    genes.push(getGene(61, OUTPUT.LEFT, 1));
+    genes.push(getGene(61, OUTPUT.LEFT, 1.7));
     genes.push(getGene(72, OUTPUT.LEFT, 1));
     genes.push(getGene(83, OUTPUT.LEFT, .8));
     genes.push(getGene(94, OUTPUT.LEFT, .8));
 
     genes.push(getGene(40, OUTPUT.LEFT, .5));
     genes.push(getGene(51, OUTPUT.LEFT, .5));
-    genes.push(getGene(62, OUTPUT.LEFT, 1));
+    genes.push(getGene(62, OUTPUT.LEFT, 1.5));
     genes.push(getGene(73, OUTPUT.LEFT, .5));
     genes.push(getGene(84, OUTPUT.LEFT, .5))
     

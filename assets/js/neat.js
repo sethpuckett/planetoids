@@ -321,7 +321,6 @@ var Neat = (function (planetoids, solution) {
     pool.species = survived; 
   }
 
-  // TODO: bad name. actually calculating average rank
   function calculateAverageFitness(species) {
     var total = 0;
 
@@ -431,7 +430,7 @@ var Neat = (function (planetoids, solution) {
 
     for (var speciesIndex in pool.species) {
       var species = pool.species[speciesIndex];
-      if (species.genomes.length > 0 && sameSpecies(childGenome, species.genomes[0])) { // TODO: why only checking first element?
+      if (species.genomes.length > 0 && sameSpecies(childGenome, species.genomes[0])) {
         species.genomes.push(childGenome);
         foundSpecies = true;
         break;
@@ -479,7 +478,6 @@ var Neat = (function (planetoids, solution) {
       p -= 1;
     }
 
-    // TODO: better understanding of bias mutation
     p = genome.mutationRates.bias;
     while (p > 0) {
       if (Math.random() > p) {
@@ -549,7 +547,6 @@ var Neat = (function (planetoids, solution) {
     newLink.into = neuron1;
     newLink.out = neuron2;
 
-    // TODO: What is this doing? should it be INPUT_COUNT - 1?
     if (forceBias) {
       newLink.into = INPUT_COUNT;
     }
@@ -784,8 +781,6 @@ var Neat = (function (planetoids, solution) {
   }
 
   function evaluateNetwork(network) {
-
-    // table.insert(inputs, 1) // TODO: What does this do?
 
     for (var i = 0; i < NEAT_INPUT_SIZE; i++) {
       for (var j = 0; j < NEAT_INPUT_SIZE; j++) {
