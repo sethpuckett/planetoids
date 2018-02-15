@@ -172,7 +172,7 @@ var NeatUi = (function (neat) {
     for (var geneIndex in genome.genes) {
       var gene = genome.genes[geneIndex];
 
-      var alpha = Math.min(1, Math.abs(gene.weight));
+      var alpha = Math.min(1, .5 + Math.abs(gene.weight) );
 
       if (gene.weight > 0) {
         connectionGraphics.lineStyle(1, 0x22FF22, alpha);

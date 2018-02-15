@@ -1,8 +1,9 @@
-var Neat = (function (planetoids) {
+var Neat = (function (planetoids, solution) {
 
   var input;
   var pool;
   var dead;
+  var solutionGenes;
 
   var keystate = {
       left: false,
@@ -70,7 +71,13 @@ var Neat = (function (planetoids) {
   }
 
   function initializePool() {
-    pool = newPool();
+    solutionParam = getParameterByName("solution");
+
+    if (solutionParam != null) {
+      pool = solutionPool();
+    } else {
+      pool = newPool();
+    }
 
     for (var i = 0; i < POPULATION; i++) {
       var basic = basicGenome();
@@ -88,7 +95,7 @@ var Neat = (function (planetoids) {
 
     evaluateCurrent();
 
-    if (dead) {
+    if (dead && solutionParam == null) {
       var fitness = planetoids.getScore();
       genome.fitness = fitness;
   
@@ -121,6 +128,20 @@ var Neat = (function (planetoids) {
       currentFrame: 0,
       maxFitness: 0
     };
+  }
+
+  function solutionPool() {
+    var solPool = newPool();
+    var species = newSpecies();
+    var genome = newGenome();
+
+    var genes = solution.get();
+
+    genome.genes = genes;
+    species.genomes = [genome];
+    solPool.species = [species];
+
+    return solPool;
   }
 
   function newGenome() {
@@ -829,4 +850,4 @@ var Neat = (function (planetoids) {
     update: update,
     kill: kill
   };
-}(Planetoids));
+}(Planetoids, Solution));
