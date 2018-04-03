@@ -91,8 +91,6 @@ var Neat = (function (planetoids, solution) {
     var species = pool.species[pool.currentSpecies];
     var genome = species.genomes[pool.currentGenome];
 
-    // displayGenome();
-
     evaluateCurrent();
 
     if (dead && solutionParam == null) {
